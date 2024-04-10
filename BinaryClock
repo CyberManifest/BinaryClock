@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #clock {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .bar {
+            width: 10px;
+            height: 100px;
+            margin: 0 2px;
+            transition: background 0.5s;
+        }
+        .hour { 
+            background: darkgreen; 
+        }
+        .minute { 
+            background: darkblue; 
+            margin-left: 2px; /* Adjusted space between minute bars */
+        }
+        .second { 
+            background: darkred; 
+            margin-left: 2px; /* Adjusted space between second bars */
+        }
+        .on { opacity: 1; }
+        .off { opacity: 0.3; }
+        .group { 
+            margin-left: 20px; /* Adjusted space between groups */
+        }
+    </style>
+</head>
+<body>
+    <div id="clock"></div>
+    <div style="margin-top: 20px;">
+        <label><input type="checkbox" id="format" checked> 12 hour format</label>
+    </div>
+    <script>
+        const clock = document.getElementById('clock');
+        const format = document.getElementById('format');
+        const bars = Array.from({length: 18}, (_, i) => {
+            const bar = document.createElement('div');
+            bar.className = 'bar ' + (i < 6 ? 'hour' : i < 12 ? 'minute' : 'second');
+            if (i === 6 || i === 12) {
+                bar.classList.add('group'); /* Add group class to first bar of each group */
+            }
+            clock.appendChild(bar);
+            return bar;
+        });
+        setInterval(() => {
+            const now = new Date();
+            const hours = format.checked ? now.getHours() % 12 || 12 : now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const binary = [hours, minutes, seconds].map(n => n.toString(2).padStart(6, '0')).join('');
+            bars.forEach((bar, i) => {
+                bar.classList.remove('on', 'off');
+                bar.classList.add(binary[i] === '1' ? 'on' : 'off');
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
